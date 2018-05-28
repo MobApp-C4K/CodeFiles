@@ -4,4 +4,6 @@
     <string name="search">Search</string>
     <string name="about">about</string>
     <string name="call_text">اتصال</string>
+    <string name="email">emnumbers-iraq@codeforiraq.org</string>
+    <string name="e_mail">E-Mail</string>
 </resources>

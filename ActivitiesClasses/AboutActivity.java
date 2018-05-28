@@ -1,9 +1,12 @@
 package com.c4k.emnumbers;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -13,16 +16,17 @@ public class AboutActivity extends AppCompatActivity {
     WebView webView;
     SwipeRefreshLayout swipe;
     Toolbar v7Toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
         // Support toolbar for backward devices
-        v7Toolbar=findViewById(R.id.aboutToolBar);
+        v7Toolbar = findViewById(R.id.aboutToolBar);
         setSupportActionBar(v7Toolbar);
         // Show back arrow button
-        if  (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         swipe = findViewById(R.id.swipe);
@@ -32,31 +36,48 @@ public class AboutActivity extends AppCompatActivity {
                 WebAction();
             }
         });
-
         WebAction();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.email_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
 
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            // when back arrow pressed
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.sendItem:
+                SendAnEmail();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
-    public void WebAction(){
+
+    private void SendAnEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto", "emnumbers-iraq@codeforiraq.org", null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "رأيي بالتطبيق");
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+    }
+
+    public void WebAction() {
 
         webView = findViewById(R.id.WebV);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.loadUrl("file:///android_asset/about_us.html");
         swipe.setRefreshing(true);
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
-                webView.loadUrl("https://blog.google.com/");
 
             }
 
@@ -69,13 +90,12 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
-
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
-        if (webView.canGoBack()){
+        if (webView.canGoBack()) {
             webView.goBack();
-        }else {
+        } else {
             finish();
         }
     }
